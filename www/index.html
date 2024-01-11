@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>paneles de tareas</title>
+</head>
+<body>
+    <input type="text" name="title" id="title">
+    <input type="button" value="Nueva panel" onclick="crearPanel()">
+    <div id="panels"></div>
+</body>
+<script>
+    const ws = new WebSocket('ws://'+location.hostname+':443/');
+
+
+    const panels = document.getElementById('panels');
+    ws.onmessage = function(m){
+        console.log(m);
+        const msg = JSON.parse(m.data);
+        const {tipo} = msg;
+
+        if(tipo === 'panel'){
+            console.log('mmmm')
+            const crearPanel = document.createElement('div');
+            crearPanel.style = {
+                display: "inline-block",
+                width:"25%",
+                height:'auto',
+                borderStyle :' 2px solid blue',
+            };
+            panels.appendChild(crearPanel);
+        }
+    }
+
+    const titloPanel = document.getElementById('title')
+    function crearPanel(){
+       // const crearPanel = document.createElement('div');
+        //crearPanel.style = {}
+        ws.send(JSON.stringify({
+            'tipo':'panel',
+            'title': titloPanel.value
+        }));
+        titloPanel.value = '';
+        titloPanel.focus();
+    }
+</script>
+</html>
